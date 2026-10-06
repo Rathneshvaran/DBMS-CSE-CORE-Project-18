@@ -1,4 +1,4 @@
-# Airline Reservation & Flight Operations Management System — Review 3
+# Airline Reservation & Flight Operations Management System 
 
 ## Stack
 - Python 3
