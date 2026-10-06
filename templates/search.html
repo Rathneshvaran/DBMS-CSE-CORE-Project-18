@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-title">
+    <p class="eyebrow">FLIGHT SEARCH</p>
+    <h1>Find your flight</h1>
+</div>
+
+<form class="searchbar" method="get">
+
+    <label>
+        From
+        <select name="origin">
+            <option value="">Any airport</option>
+
+            {% for a in airports %}
+                <option value="{{ a.code }}"
+                    {% if origin == a.code %}selected{% endif %}>
+                    {{ a.city }} ({{ a.code }})
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+
+
+    <label>
+        To
+        <select name="destination">
+            <option value="">Any airport</option>
+
+            {% for a in airports %}
+                <option value="{{ a.code }}"
+                    {% if destination == a.code %}selected{% endif %}>
+                    {{ a.city }} ({{ a.code }})
+                </option>
+            {% endfor %}
+        </select>
+    </label>
+
+
+    <label>
+        Date
+        <input
+            type="date"
+            name="date"
+            value="{{ date }}"
+        >
+    </label>
+
+
+    <button type="submit" class="btn primary">
+        Search
+    </button>
+
+</form>
+
+
+<div class="cards">
+
+    {% for f in flights %}
+
+    <div class="flight-card">
+
+        <!-- Flight Number + Status -->
+        <div class="flight-top">
+            <strong>{{ f.flight_number }}</strong>
+            <span class="badge">{{ f.status }}</span>
+        </div>
+
+
+        <!-- DATE -->
+        <div class="meta" style="margin-bottom: 14px;">
+            <strong>
+                📅 {{ f.departure_time.strftime('%d %B %Y') }}
+            </strong>
+        </div>
+
+
+        <!-- Route -->
+        <div class="route">
+
+            <div>
+                <b>{{ f.origin_code }}</b>
+                <small>{{ f.origin_city }}</small>
+
+                <strong>
+                    {{ f.departure_time.strftime('%H:%M') }}
+                </strong>
+            </div>
+
+
+            <div class="line">
+                ✈ ─────────
+            </div>
+
+
+            <div>
+                <b>{{ f.destination_code }}</b>
+                <small>{{ f.destination_city }}</small>
+
+                <strong>
+                    {{ f.arrival_time.strftime('%H:%M') }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- Flight Details -->
+        <div class="meta">
+            {{ f.model }}
+            •
+            {{ f.capacity }} seats
+            •
+            {{ f.booked }} booked
+        </div>
+
+
+        <!-- Select Flight -->
+        <a
+            class="btn primary full"
+            href="{{ url_for('book', flight_id=f.flight_id) }}"
+        >
+            Select Flight
+        </a>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        No flights match your search.
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

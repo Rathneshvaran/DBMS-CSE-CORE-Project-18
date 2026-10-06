@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="page-title">
+  <p class="eyebrow">DATABASE CRUD</p>
+  <h1>Passenger Management</h1>
+  <p class="meta">
+    Add, view and delete passenger records directly through the Flask UI.
+    Every action is stored in the MySQL <strong>passenger</strong> table.
+  </p>
+</section>
+
+<!-- ADD PASSENGER -->
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <p class="eyebrow">INSERT</p>
+      <h2>Add Passenger</h2>
+    </div>
+    <span class="badge">MySQL INSERT</span>
+  </div>
+
+  <form method="post" class="formgrid">
+
+    <input type="hidden" name="action" value="add">
+
+    <label>
+      Full Name
+      <input
+        name="full_name"
+        placeholder="Demo Passenger"
+        required
+      >
+    </label>
+
+    <label>
+      Email
+      <input
+        type="email"
+        name="email"
+        placeholder="demo@gmail.com"
+        required
+      >
+    </label>
+
+    <label>
+      Phone
+      <input
+        name="phone"
+        placeholder="9876543210"
+        required
+      >
+    </label>
+
+    <label>
+      Passport No.
+      <span class="meta">(optional)</span>
+      <input
+        name="passport_no"
+        placeholder="P9999999"
+      >
+    </label>
+
+    <button class="btn primary wide" type="submit">
+      + Add Passenger
+    </button>
+
+  </form>
+</section>
+
+
+<!-- VIEW PASSENGERS -->
+<section class="panel">
+
+  <div class="panel-head">
+    <div>
+      <p class="eyebrow">VIEW</p>
+      <h2>Passenger Records</h2>
+    </div>
+
+    <span class="badge">
+      {{ passengers|length }} records shown
+    </span>
+  </div>
+
+  <div class="tablewrap">
+
+    <table>
+
+      <tr>
+        <th>ID</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Passport</th>
+        <th>Bookings</th>
+        <th>Action</th>
+      </tr>
+
+      {% for p in passengers %}
+
+      {% set booking_count = booking_map.get(p.passenger_id, 0) %}
+
+      <tr>
+
+        <td>
+          <strong>{{ p.passenger_id }}</strong>
+        </td>
+
+        <td>
+          {{ p.full_name }}
+        </td>
+
+        <td>
+          {{ p.email }}
+        </td>
+
+        <td>
+          {{ p.phone }}
+        </td>
+
+        <td>
+          {{ p.passport_no or '—' }}
+        </td>
+
+        <td>
+          {{ booking_count }}
+        </td>
+
+        <td>
+
+          {% if booking_count == 0 %}
+
+          <form
+            method="post"
+            style="display:inline"
+            onsubmit="return confirm('Delete {{ p.full_name }}?');"
+          >
+
+            <input
+              type="hidden"
+              name="action"
+              value="delete"
+            >
+
+            <input
+              type="hidden"
+              name="passenger_id"
+              value="{{ p.passenger_id }}"
+            >
+
+            <button
+              class="btn danger small"
+              type="submit"
+            >
+              Delete
+            </button>
+
+          </form>
+
+          {% else %}
+
+          <span class="badge danger">
+            Booked
+          </span>
+
+          {% endif %}
+
+        </td>
+
+      </tr>
+
+      {% else %}
+
+      <tr>
+        <td colspan="7">
+          No passenger records found.
+        </td>
+      </tr>
+
+      {% endfor %}
+
+    </table>
+
+  </div>
+
+</section>
+
+{% endblock %}
